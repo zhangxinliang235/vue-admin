@@ -67,13 +67,22 @@ module.exports = {
   // 是一个函数，会接收一个基于 webpack-chain 的 ChainableConfig 实例。允许对内部的 
   // webpack 配置进行更细粒度的修改。
   chainWebpack: config => {
+   
     // 添加别名
-    config.resolve.alias
-      .set("@", resolve("src"))
-      .set("assets", resolve("src/assets"))
-      .set("components", resolve("src/components"))
-      .set("utils", resolve("src/utils"))
-      .set("api", resolve("src/api"));
+    // config.resolve.alias
+    //   .set("@", resolve("src"))
+    //   .set("assets", resolve("src/assets"))
+    //   .set("components", resolve("src/components"))
+    //   .set("utils", resolve("src/utils"))
+    //   .set("api", resolve("src/api"));
+  },
+  configureWebpack: (config) => {
+    config.resolve = {
+      extensions: ['.js','.json','.vue'], // 自动添加文件后缀名
+      alias: {
+        '@': path.resolve(__dirname,'./src')
+      }
+    }
   },
  
   // 是否为 Babel 或 TypeScript 使用 thread-loader。该选项在系统的 CPU 有多于
@@ -89,6 +98,16 @@ module.exports = {
   // 有些值像 publicPath 和 historyApiFallback 不应该被修改，因为它们需要和开发服务器的 publicPath 同步以保障正常的工作。
   // 本地服务配置
   devServer: {
+    open: true,
+    proxy: {
+      '/api': {
+          target: 'http://1.116.64.64:5004/api2/',
+          changeOrigin: true,
+          pathRewrite: {
+              '^/api': ''
+          }
+      }
+  }
   },
  
   // 第三方插件选项
