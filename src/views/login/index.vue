@@ -25,7 +25,7 @@
             <el-input v-model.number="ruleForm.code"></el-input>
           </el-col>
           <el-col :span="9">
-            <el-button type="success" class="block">获取验证码</el-button>
+            <el-button type="success" @click="getCode()" class="block">获取验证码</el-button>
           </el-col>
         </el-row>
 
@@ -37,6 +37,8 @@
   </div>
 </template>
 <script>
+import { getSms } from '@/api/login'
+import { login } from '@/api/user'
 import { ref, reactive, onMounted } from '@vue/composition-api'
 import { usernameRule } from '@/utils/vaildate'
 export default {
@@ -104,11 +106,11 @@ export default {
     })
 
     onMounted(() => {
-
+      console.log(11111);
     })
 
     /** 
-     * 声明函数
+     * 声明函数 切换登录/注册
      */
     const toggleMenu = ((data) => {
       console.log(data);
@@ -119,7 +121,20 @@ export default {
       model.value = data.type
       console.log(model.value);
     })
-    // 提交
+
+    const getCode = (() => {
+      let data = {
+        usercode: ruleForm.username,
+        password: ruleForm.password
+      }
+      login(data)
+    })
+
+
+    /**
+     * 
+     * @param {*} formName 
+     */
     const submitForm = ((formName) => {
       context.refs[formName].validate((valid) => {
         if (valid) {
@@ -137,7 +152,8 @@ export default {
       ruleForm,
       rules,
       toggleMenu,
-      submitForm
+      submitForm,
+      getCode
     }
   }
 }
