@@ -8,7 +8,7 @@
     <el-form class="login-form demo-ruleForm" :model="ruleForm" status-icon :rules="rules" ref="ruleForm" size="medium">
       <el-form-item prop="username" class="login-item">
         <label>账号</label>
-        <el-input type="password" v-model="ruleForm.username" autocomplete="off"></el-input>
+        <el-input type="text" v-model="ruleForm.username" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item prop="password">
         <label>密码</label>
@@ -28,27 +28,25 @@
             <el-button type="success" @click="getCode()" class="block">获取验证码</el-button>
           </el-col>
         </el-row>
-
       </el-form-item>
       <el-form-item>
-        <el-button type="danger" class="login-btn block" @click="submitForm('ruleForm')">提交</el-button>
+        <el-button type="danger" class="login-btn block" @click="submitForm('ruleForm')">{{model === 'login'? '登录': '注册'}}</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 <script>
-import { getSms } from '@/api/login'
-import { login } from '@/api/user'
+import { login, getSms } from '@/api/login'
 import { ref, reactive, onMounted } from '@vue/composition-api'
 import { usernameRule } from '@/utils/vaildate'
 export default {
   name: 'Login',
-  setup(props, context) {
+  setup(props, {refs}) {
     // 验证账号
     var validateUsername = (rule, value, callback) => {
       if (!value) {
-        return callback(new Error('账号不能为空'));
-      } else if (usernameRule(value)) {
+        callback(new Error('账号不能为空'));
+      } else if (!usernameRule( value)) {
         callback(new Error('请输入4-10位用户名'));
       } else {
         callback();
@@ -106,7 +104,6 @@ export default {
     })
 
     onMounted(() => {
-      console.log(11111);
     })
 
     /** 
@@ -124,10 +121,9 @@ export default {
 
     const getCode = (() => {
       let data = {
-        usercode: ruleForm.username,
-        password: ruleForm.password
+        username: ruleForm.username
       }
-      login(data)
+      getSms(data)
     })
 
 
@@ -136,9 +132,20 @@ export default {
      * @param {*} formName 
      */
     const submitForm = ((formName) => {
-      context.refs[formName].validate((valid) => {
+      refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!');
+          // alert('submit!');
+          let data = {
+            username: ruleForm.username,
+            password: ruleForm.password,
+            code: ruleForm.code
+          }
+          login(data).then(res => {
+            console.log('res', res);
+            localStorage.setItem('toke',res.data.token)
+          }).catch(err => {
+            console.log(err);
+          })
         } else {
           console.log('error submit!!');
           return false;

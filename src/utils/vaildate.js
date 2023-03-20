@@ -24,12 +24,12 @@ export function passRule(rule, value, callback) {
     }
 }
 // 账号匹配
-export function usernameRule(rule, value, callback) {
+export function usernameRule(value) {
     //  请输入4-10位昵称
-    let reg = /(^[a-zA-Z0-9]{4,10}$)/;
-    if (!reg.test(value)) {
-       return false
-    } else {
+    let reg = /^[a-zA-Z0-9_-]{4,10}$/
+    if (reg.test(value)) {
        return true
+    } else {
+        return false
     }
 }

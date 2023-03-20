@@ -93,39 +93,19 @@ module.exports = {
       errors: true
     },
     // before: require('./mock/mock-server.js')    // 这是重点 devServe之上的都可以不写,这句话必须写
-    before(app, server, compiler) {
-      app.get('/api/seller', (req, res) => {
-        res.json({
-          errno: 0,
-          data: seller
-        })
-      })
-      app.get('/api/goods', (req, res) => {
-        res.json({
-          errno: 0,
-          data: goods
-        })
-      })
-      app.get('/api/ratings', (req, res) => {
-        res.json({
-          errno: 0,
-          data: ratings
-        })
-      })
-    }
   },
-    // devServer: {
-    //   // proxy: {
-    //   //   '/devapi': {
-    //   //     // target: 'http://www.web-jshtml.cn/productapi',
-    //   //     target: 'http://localhost:8080',
-    //   //     changeOrigin: true,
-    //   //     pathRewrite: {
-    //   //       '^/devapi': ''
-    //   //     }
-    //   //   }
-    //   // }
-    // },
+    devServer: {
+      proxy: {
+        '/api': {
+          // target: 'http://www.web-jshtml.cn/productapi',
+          target: 'http://localhost:3000',
+          changeOrigin: true,
+          pathRewrite: {
+            '^/api': ''
+          }
+        }
+      }
+    },
 
     // 第三方插件选项
     // 这是一个不进行任何 schema 验证的对象，因此它可以用来传递任何第三方插件选项。
